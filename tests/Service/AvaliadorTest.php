@@ -84,7 +84,6 @@ class AvaliadorTest extends TestCase
         $leilao->recebeLance(new Lance($maria, 2500));
         $leilao->recebeLance(new Lance($joao, 2000));
 
-
         $leiloeiro = new Avaliador();
 
         // Executa código a ser testado | Act - When
@@ -93,5 +92,33 @@ class AvaliadorTest extends TestCase
 
         // Verifica se o resultado é o esperado | Assert - Then
         self::assertEquals(2000, $menorValor);
+    }
+
+    public function testAvaliadorDeveBuscar3MaioresValores()
+    {
+        // Cria cenário para o teste | Arrange - Given
+        $leilao = new Leilao('Fiat 147 0KM');
+
+        $maria = new Usuario('Maria');
+        $joao = new Usuario('Joao');
+        $ana = new Usuario('Ana');
+        $jorge = new Usuario('Jorge');
+
+        $leilao->recebeLance(new Lance($ana, 1500));
+        $leilao->recebeLance(new Lance($joao, 1000));
+        $leilao->recebeLance(new Lance($maria, 2000));
+        $leilao->recebeLance(new Lance($jorge, 1700));
+
+        $leiloeiro = new Avaliador();
+
+        // Executa código a ser testado | Act - When
+        $leiloeiro->avalia($leilao);
+        $maioresLances = $leiloeiro->getMaioresLances();
+
+        // Verifica se o resultado é o esperado | Assert - Then
+        self::assertCount(3, $maioresLances);
+        self::assertEquals(2000, $maioresLances[0]->getValor());
+        self::assertEquals(1700, $maioresLances[1]->getValor());
+        self::assertEquals(1500, $maioresLances[2]->getValor());
     }
 }
