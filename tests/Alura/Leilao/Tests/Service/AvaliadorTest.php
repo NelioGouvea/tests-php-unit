@@ -117,4 +117,27 @@ class AvaliadorTest extends TestCase
             'ordem-aleatoria'=>[$leilao]
         ];
     }
+
+    public function testLeilaoVazioNaoPodeSerAvaliado()
+    {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Não é possível avaliar leilão vazio');
+        $leilao = new Leilao('Fusca Azul');
+        $this->leiloeiro->avalia($leilao);
+    }
+
+    public function testLeilaoFinalizadoNaoPodeSerAvaliado()
+    {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Não é possível avaliar leilão finalizado');
+
+        $leilao = new Leilao('Fiat 147 0KM');
+
+        $ana = new Usuario('Ana');
+
+        $leilao->recebeLance(new Lance($ana, 2000));
+        $leilao->finaliza();
+
+        $this->leiloeiro->avalia($leilao);
+    }
 }
